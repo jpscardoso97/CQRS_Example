@@ -1,6 +1,7 @@
 ﻿namespace CQRS_Example.Model
 {
     using CQRS_Example.Commands;
+    using CQRS_Example.Events;
     using CQRS_Example.Queries;
     using System;
 
@@ -33,7 +34,13 @@
             var descriptionChangeCommand = c as ChangeProductDescriptionCommand;
             if(descriptionChangeCommand?.Target == this)
             {
-                this._description = descriptionChangeCommand.Description;
+                if (c.RegisterEvent)
+                {
+                    Program.EventBroker.Events.Add(new ProductDescriptionChangedEvent(this, _description, descriptionChangeCommand.Description));
+                }
+
+                Console.WriteLine($"Changing description from {_description} to {descriptionChangeCommand.Description} ...");
+                _description = descriptionChangeCommand.Description;
             }
         }
 

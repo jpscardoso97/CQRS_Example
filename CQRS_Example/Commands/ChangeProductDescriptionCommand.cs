@@ -7,7 +7,11 @@
         public Product Target;
         public string Description;
 
-        public ChangeProductDescriptionCommand(Product target, string description)
+        public ChangeProductDescriptionCommand(
+            Product target, 
+            string description, 
+            bool registerEvent = true)
+            : base(registerEvent)
         {
             Target = target;
             Description = description;

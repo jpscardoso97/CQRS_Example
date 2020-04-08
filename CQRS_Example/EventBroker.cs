@@ -5,6 +5,7 @@
     using CQRS_Example.Queries;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class EventBroker
     {
@@ -27,6 +28,19 @@
         public void Command(Command c)
         {
             Commands?.Invoke(this, c);
+        }
+    
+        public void UndoEvent()
+        {
+            Console.WriteLine("Undoing event: ");
+
+            ProductDescriptionChangedEvent lastEvent = Events.LastOrDefault() as ProductDescriptionChangedEvent;
+            
+            if (lastEvent != null)
+            {
+                Command(new ChangeProductDescriptionCommand(lastEvent.Target, lastEvent.OldDescription, false));
+                Events.Remove(lastEvent);
+            }
         }
     }
 }

@@ -2,10 +2,12 @@
 namespace CQRS_Example
 {
     using CQRS_Example.Commands;
+    using CQRS_Example.Events;
     using CQRS_Example.Model;
     using CQRS_Example.Queries;
     using System;
-    
+    using System.Linq;
+
     class Program
     {
         //This would be in Dependency Injection and acessible everywhere we need events
@@ -24,11 +26,24 @@ namespace CQRS_Example
             var productDescription = EventBroker.Query<string>(balenciagaShoesDescriptionQuery);
             Console.WriteLine($"Product Description from Query is {productDescription}");
 
-            Console.WriteLine("Changing product description...");
             EventBroker.Command(new ChangeProductDescriptionCommand(balenciagaShoes, "Black Balenciaga Shoes"));
 
             productDescription = EventBroker.Query<string>(balenciagaShoesDescriptionQuery);
             Console.WriteLine($"New Product Description from Query is {productDescription}");
+
+            Console.WriteLine("List of all Events: ");
+            foreach (var e in EventBroker.Events)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            EventBroker.UndoEvent();
+
+            Console.WriteLine("List of all Events: ");
+            foreach(var e in EventBroker.Events)
+            {
+                Console.WriteLine(e.ToString());
+            }
 }
     }
 }
